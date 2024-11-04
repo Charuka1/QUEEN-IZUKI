@@ -28,16 +28,20 @@ const l = console.log
 var { updateCMDStore,isbtnID,getCMDStore,getCmdForCmdId,connectdb,input,get,updb,updfb } = require("./lib/database")
 
 //===================SESSION============================
-//================SESSION-AUTH============================
-if (!fs.existsSync(__dirname + '/session/creds.json')) {
-if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
-const sessdata = config.SESSION_ID
-const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
-filer.download((err, data) => {
-if(err) throw err
-fs.writeFile(__dirname + '/session/creds.json', data, () => {
-console.log("Session downloaded ✅")
-})})}
+//===================SESSION============================
+async function MakeSession() {
+    try {
+        console.log("WRITING SESSION...");
+        const {
+          data
+        } = await axios(`https://paste.c-net.org/${config.SESSION_ID.split(':')[1]}`);
+        await fs.writeFileSync("./session/creds.json", JSON.stringify(data));
+        console.log("SESSION CREATED SUCCESSFULLY✅");
+      } catch (err) {
+        console.log(err);
+      }
+}
+MakeSession();
 
 // <<==========PORTS===========>>
 const express = require("express");
